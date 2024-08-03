@@ -1,0 +1,42 @@
+﻿@model IEnumerable<Movie>
+@{
+    ViewData["Title"] = "Index";
+}
+
+<div class="card shadow border-0 my-4">
+    <div class="card-header bg-primary bg-gradient m-lg-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="text-primar py-2">Movie Index</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="card-body p-4">
+        <div class="container">
+            <div class="row pt-1">
+
+                <div class="col-12 text-end mb-4">
+                    <a asp-controller="Movie" asp-action="Upsert" class="btn btn-success"><i class="bi bi-plus-circle"></i>&nbsp; &nbsp;Add New Movie</a>
+                </div>
+            </div>
+            <table id="tblData" class="table table-bordered table-striped" style="width: 100%">
+                <thead>
+                    <tr>
+                        <th class="bg-primary">ID</th>
+                        <th class="bg-primary">Title</th>
+                        <th class="bg-primary">Genre</th>
+                        <th class="bg-primary">Year</th>
+                        <th class="bg-primary">Director</th>
+                        <th class="bg-primary">Edit/Delete</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/movie.js"></script>
+}

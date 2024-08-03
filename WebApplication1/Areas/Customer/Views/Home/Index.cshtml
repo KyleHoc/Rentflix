@@ -1,0 +1,50 @@
+﻿@model IEnumerable<Movie>
+@{
+    ViewData["Title"] = "Home";
+}
+
+<link rel="stylesheet" href="~/css/slider.css" asp-append-version="true" />
+<div class="home-body row justify-content-center mb-5">
+    <div class="banner col-12 text-center mt-4 pt-4 pb-5" style="background-image: url(images/cutbanner.jpg);">
+        <div class="inner m-2 mt-5 pt-5 pb-5 bg-black" style="opacity: .8;">
+            <h4 class="mb-3">Watch your favorite movies anytime</h4>
+            <h4 class="mb-3">Free Rentals (for pretend Web Dev purposes)</h4>
+            <h4 class="mb-3">Keep them for as long as you want (because they're not real)</h4>
+            <a asp-controller="Movie" asp-action="Upsert" class="btn btn-info">Start Now!</a>
+
+        </div>
+    </div>
+
+    <div class="row popular mt-3 mb-5">
+        <div class="text-center row">
+            <h2 class="text-white fw-bold mb-3 mt-4">Popular Movies</h2>
+
+            <div class="wrapper">
+                <i id="left" class="fa-solid bi bi-arrow-left bg-info"></i>
+                <ul class="carousel">
+                    @foreach(var movie in Model)
+                    {
+                        <li class="card">
+                            <div class="img">
+                                <a asp-controller="Home" asp-action="Details" asp-route-id="@movie.MovieId">
+                                    <img src="@movie.ImageUrl" class="card-img-top mt-5" style="width: 60%; height: 70%;" />
+                                </a>
+                                
+                            </div>
+                            <div class="mt-2 title-link"style="min-height: 15px;">
+                                <a asp-controller="Home" asp-action="Details" asp-route-id="@movie.MovieId" style="text-decoration: none;">
+                                    <h6 class="text-info" style="flex-basis: 100%;">@movie.Title</h6>
+                                </a>
+                            </div>
+                            <p class="mt-4" style="margin-bottom: 0">@movie.Genre</p>
+                            <p class="">@movie.ReleaseYear</p>
+                        </li>
+                    }
+                </ul>
+                <i id="right" class="fa-solid bi bi bi-arrow-right bg-info"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+

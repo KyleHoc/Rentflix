@@ -1,0 +1,107 @@
+﻿@model Movie
+
+<div class="card shadow border-0 mt-4" style="margin-bottom: 15%;">
+    <div class="card-header bg-primary bg-gradient m-lg-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="text-primar py-2">@(Model.MovieId!=0?"Edit" : "Add") a Movie</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="card-body p-4">
+        <form method="post" enctype="multipart/form-data" class="row">
+            <input asp-for="MovieId" hidden />
+            <input asp-for="ImageUrl" hidden />
+
+            <div class="row">
+                <div class="col-10">
+                    <div class="border-5 p-3">
+                        <!---- <div asp-validation-summary="All"></div>-->
+                        <div class="form-floating py-2 col-12">
+                            <input asp-for="Title" class="form-control border-0 shadow" />
+                            <label class="ms-2" asp-for="Title"></label>
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-floating py-2 col-12">
+                            <input asp-for="Genre" class="form-control border-0 shadow" />
+                            <label class="ms-2" asp-for="Genre"></label>
+                            <span asp-validation-for="Genre" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-floating py-2 col-12">
+                            <input asp-for="Director" class="form-control border-0 shadow" />
+                            <label class="ms-2" asp-for="Director"></label>
+                            <span asp-validation-for="Director" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-floating py-2 col-12">
+                            <input asp-for="ReleaseYear" class="form-control border-0 shadow" />
+                            <label class="ms-2" asp-for="ReleaseYear"></label>
+                            <span asp-validation-for="ReleaseYear" class="text-danger"></span>
+                        </div>
+
+                        <label class="ms-2" asp-for="Synopsis"></label>
+                        <div class="form-floating py-2 col-12">
+                            <textarea asp-for="Synopsis" class="form-control border-0 shadow"></textarea>
+                            <span asp-validation-for="Synopsis" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-floating py-2 col-12">
+                            <input type="file" name="file" asp-for="ImageUrl" class="form-control border-0 shadow" />
+                            <label class="ms-2" asp-for="ImageUrl"></label>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-6 col-md-3">
+                                @if (Model.MovieId != 0)
+                                {
+                                    <button type="submit" class="btn btn-warning form-control">Update</button>
+                                }
+                                else
+                                {
+                                    <button type="submit" class="btn btn-primary form-control">Create</button>
+                                }
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <a asp-controller="Movie" asp-action="Index" class="btn btn-secondary form-control">Back to List</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-2">
+                    <img src="@Model.ImageUrl" alt="Image Unavailible" width="100%" style="border-radius: 5px; border: 1px solid #bbb9b9" />
+                </div>
+            </div>
+
+
+            
+        </form>
+    </div>
+</div>
+
+<!--In browser validation-->
+@section Scripts {
+    <script>
+        tinymce.init({
+            selector: 'textarea',
+            forced_root_block: 'test',
+            force_br_newlines: true,
+            force_p_newlines: false,
+            plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount ',
+            toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+            tinycomments_mode: 'embedded',
+            tinycomments_author: 'Author name',
+            mergetags_list: [
+                { value: 'First.Name', title: 'First Name' },
+                { value: 'Email', title: 'Email' },
+            ],
+            ai_request: (request, respondWith) => respondWith.string(() => Promise.reject("See docs to implement AI Assistant")),
+        });
+    </script>
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+}
