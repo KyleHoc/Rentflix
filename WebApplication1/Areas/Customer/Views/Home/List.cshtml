@@ -1,0 +1,41 @@
+﻿@model IEnumerable<Movie>
+
+@{
+    ViewData["Title"] = "Movies";
+}
+
+<div class="row mt-3 mb-5">
+    <div class="text-center mb-2">
+        <h1>Movies</h1>
+
+        <form asp-controller="Home" asp-action="List" method="get" class="row justify-content-center mb-4 mt-4">
+            <input class="form-control" type="text" placeholder="Search" name="searchString" style="width: 75%">
+            <button class="btn btn-primary mx-2" type="submit" style="width: 20%">Search</button>
+        </form>
+
+    </div>
+    @foreach (var movie in Model)
+    {
+        <div class="card mb-5 pt-2">
+            <div class="card-body">
+                <div class="row">
+                    <div class="image col-2">
+                        <a asp-controller="Home" asp-action="Details" asp-route-id="@movie.MovieId">
+                            <img src="@movie.ImageUrl" class="card-img-top" style="width: 70%; height: 90%;" />
+                        </a>
+                    </div>
+
+                    <div class="content col-10">
+                        <a asp-controller="Home" asp-action="Details" asp-route-id="@movie.MovieId" style="text-decoration: none;">
+                            <h4 class="text-info" style="flex-basis: 100%;">@movie.Title (@movie.ReleaseYear)</h4>
+                        </a>
+
+                        <p class="">Genre: @movie.Genre</p>
+                        <p class="">@Html.Raw(movie.Synopsis)</p>
+                        <a asp-controller="Home" asp-action="Details" asp-route-id="@movie.MovieId" class="btn btn-info col-3">View</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

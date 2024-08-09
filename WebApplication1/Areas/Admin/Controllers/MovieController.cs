@@ -1,13 +1,16 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Rentflix.DataAccess.Data;
 using Rentflix.DataAccess.Repository;
 using Rentflix.DataAccess.Repository.IRepository;
 using Rentflix.Models;
+using Rentflix.Utility;
 
 namespace Rentflix.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = SD.Role_Admin)]
     public class MovieController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;

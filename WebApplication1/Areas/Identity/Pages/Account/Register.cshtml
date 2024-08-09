@@ -1,0 +1,73 @@
+﻿@page
+@model RegisterModel
+@{
+    ViewData["Title"] = "Register";
+}
+
+<h1 class="text-center bg-primary  mt-4 mb-0 rounded-top py-2">@ViewData["Title"]</h1>
+
+<div class="card shadow justify-content-center p-4" style="background-color: dimgray">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="d-flex row">
+                <h2>Create a new account.</h2>
+                <hr />
+                <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+                <div class="form-floating mb-3 col-12">
+                    <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
+                    <label class="mx-2" asp-for="Input.Email">Email</label>
+                    <span asp-validation-for="Input.Email" class="text-danger"></span>
+                </div>
+
+                <div class="form-floating mb-3 col-6">
+                    <input asp-for="Input.Name" class="form-control" autocomplete="username" aria-required="true" placeholder="Your name" />
+                    <label class="mx-2" asp-for="Input.Name">Username</label>
+                    <span asp-validation-for="Input.Name" class="text-danger"></span>
+                </div>
+
+                <div class="form-floating mb-3 col-6">
+                    <input asp-for="Input.PhoneNumber" class="form-control" autocomplete="username" aria-required="true" placeholder="123-456-789" />
+                    <label class="mx-2" asp-for="Input.PhoneNumber">Phone Number</label>
+                    <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
+                </div>
+
+                <div class="form-floating mb-3 col-6">
+                    <input asp-for="Input.Address" class="form-control" autocomplete="username" aria-required="true" placeholder="111 Main Street" />
+                    <label class="mx-2" asp-for="Input.Address">Street Address</label>
+                    <span asp-validation-for="Input.Address" class="text-danger"></span>
+                </div>
+
+                <div class="form-floating mb-3 col-6">
+                    <input asp-for="Input.City" class="form-control" autocomplete="username" aria-required="true" placeholder="NY" />
+                    <label class="mx-2" asp-for="Input.City">City</label>
+                    <span asp-validation-for="Input.City" class="text-danger"></span>
+                </div>
+
+
+                <div class="form-floating mb-3 col-6">
+                    <input asp-for="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
+                    <label class="mx-2" asp-for="Input.Password">Password</label>
+                    <span asp-validation-for="Input.Password" class="text-danger"></span>
+                </div>
+
+                <div class="form-floating mb-3 col-6">
+                    <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
+                    <label class="mx-2" asp-for="Input.ConfirmPassword">Confirm Password</label>
+                    <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+                </div>
+
+                @* <div class="form-floating mb-3 col-6">
+                    <select asp-for="Input.Role" asp-items="@Model.Input.RoleList" class="form-select">
+                        <option disabled selected>--Select a role--</option>
+                    </select>
+                </div> *@
+
+                <button id="registerSubmit" type="submit" class=" col-12 btn btn-lg btn-primary my-3">Register</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

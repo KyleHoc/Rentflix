@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@using Rentflix.Utility
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -26,7 +28,7 @@
                     <ul class="navbar-nav me-auto">
                         
                         <li class="nav-item">
-                            <a class="nav-link active" asp-area="" asp-controller="" asp-action="">
+                            <a class="nav-link active" asp-area="Customer" asp-controller="Home" asp-action="List">
                                 Movies
                             </a>
                         </li>
@@ -40,11 +42,14 @@
                                 Your Rentals
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link active" asp-area="Admin" asp-controller="Movie" asp-action="Index">
-                                Movie Admin
-                            </a>
-                        </li>
+                        @if (User.IsInRole(SD.Role_Admin))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link active" asp-area="Admin" asp-controller="Movie" asp-action="Index">
+                                    Movie Admin
+                                </a>
+                            </li>
+                        }
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Dropdown</a>
                             <div class="dropdown-menu">
@@ -56,10 +61,11 @@
                             </div>
                         </li>
                     </ul>
-                    <form class="d-flex">
+                    <partial name="_LoginPartial" />
+                    @* <form class="d-flex">
                         <input class="form-control me-sm-2" type="search" placeholder="Search">
                         <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
-                    </form>
+                    </form> *@
                 </div>
             </div>
         </nav>
