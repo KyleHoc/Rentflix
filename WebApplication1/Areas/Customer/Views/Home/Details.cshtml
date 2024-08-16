@@ -13,7 +13,24 @@
                 <p class="mt-4">Genre: @Model.Genre</p>
                 <p class="mt-4">Directed by: @Model.Director</p>
                 <p class="mt-4">Synopsis: @Html.Raw(Model.Synopsis)</p>
-                <a asp-controller="Movie" asp-action="Index" class="btn btn-info col-3 mt-4 mx-3"><i class="bi bi-film"></i>&nbsp;&nbsp;Rent</a>
+
+                @if (User.IsInRole(SD.Role_Admin) || User.IsInRole(SD.Role_Customer))
+                {
+                    <form asp-controller="Home" asp-action="Rent" asp-route-id="@Model.MovieId" method="post" role="form">
+                        @if (!ViewBag.isRented)
+                        {
+                            <button type="submit" class="btn btn-info col-3 mt-4 mx-3"><i class="bi bi-film"></i>&nbsp;&nbsp;Rent</button>
+                        }
+                        else
+                        {
+                            <button type="submit" disabled class="btn btn-info col-3 mt-4 mx-3">Currently Rented</button>
+                        }
+                    </form>
+                } else
+                {
+                    <a class="btn btn-primary col-4 mt-4 mx-3 p-2" id="register" asp-area="Identity" asp-page="/Account/Register">Register Or Log In To Rent</a>
+                }
+
             </div>
         </div>
     </div>

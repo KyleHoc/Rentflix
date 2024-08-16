@@ -17,3 +17,6 @@ html {
   min-height: 100%;
 }
 
+.rent-list:hover {
+    text-decoration: underline;
+}

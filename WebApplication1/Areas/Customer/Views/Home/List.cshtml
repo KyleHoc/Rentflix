@@ -4,9 +4,9 @@
     ViewData["Title"] = "Movies";
 }
 
-<div class="row mt-3 mb-5">
+<div class="row mt-3 mb-5 justify-content-center">
     <div class="text-center mb-2">
-        <h1>Movies</h1>
+        <h1>Browse Movies</h1>
 
         <form asp-controller="Home" asp-action="List" method="get" class="row justify-content-center mb-4 mt-4">
             <input class="form-control" type="text" placeholder="Search" name="searchString" style="width: 75%">
@@ -16,10 +16,10 @@
     </div>
     @foreach (var movie in Model)
     {
-        <div class="card mb-5 pt-2">
+        <div class="card mb-5 pt-2 col-10">
             <div class="card-body">
                 <div class="row">
-                    <div class="image col-2">
+                    <div class="image col-sm-12 col-lg-2 text-center">
                         <a asp-controller="Home" asp-action="Details" asp-route-id="@movie.MovieId">
                             <img src="@movie.ImageUrl" class="card-img-top" style="width: 70%; height: 90%;" />
                         </a>

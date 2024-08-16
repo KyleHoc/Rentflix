@@ -1,20 +1,30 @@
-﻿using System.ComponentModel;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Rentflix.Models
 {
     public class Rental
-    {
-        [Key][Column(Order = 0)]
+    {  
+       public int Id { get; set; }
+
         public int MovieId { get; set; }
 
-        [Key][Column(Order = 1)]
-        public int UserId { get; set; }
+        [ForeignKey("MovieId")]
+        [ValidateNever]
+        public Movie Movie { get; set; }
+
+        public string UserId { get; set; }
+
+        [ForeignKey("UserId")]
+        [ValidateNever]
+        public ApplicationUser User { get; set; }
+
+
         [Required]
-        [Column(Order = 2)]
         public DateTime RentDate { get; set; }
-        [Column(Order = 3)]
-        public DateTime ReturnDate { get; set; }
+        
+        public DateTime? ReturnDate { get; set; }
     }
 }

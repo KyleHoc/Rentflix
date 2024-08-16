@@ -1,0 +1,273 @@
+﻿@model IEnumerable<Rental>
+
+@{
+    ViewData["Title"] = "Rentals";
+}
+
+<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+<div class="mt-4 justify-content-center">
+    <div class="justify-content-center row">
+       <button class="btn btn-primary mx-2 col-5" style="" id="current-button" onclick="toggle()" disabled>View Current Rentals</button>
+        
+       <button class="btn btn-primary mx-2 col-5" style="" id="history-button" onclick="toggle()">View Rental History</button>
+    </div>
+
+    @if(!ViewBag.currentRentals)
+    {
+        <h3 class="text-center mt-5" id="current-none" style="display: block">You have no current rentals</h3>
+    } else
+    {
+        <h3 class="text-center mt-3" id="current-header" style="display: block">Current Rentals</h3>
+    }
+
+    @if (!ViewBag.pastRentals)
+    {
+        <h3 class="text-center mt-5" id="history-none" style="display: none">You have no past rentals</h3>
+    }
+    else
+    {
+        <h3 class="text-center mt-3" id="history-header" style="display: none">Rental History</h3>
+    }
+
+
+    <div class="row justify-content-center mt-3">
+        @foreach (var rental in Model)
+        {   
+            @if (rental.ReturnDate == null)
+            {
+                <div class="card mb-5 pt-2 col-10 current-body" id="current-body">
+                    <div class="card-body">
+                        <div class="row justify-content-center">
+                            <div class="image col-lg-2 col-md-4 col-sm-5 col-12 text-center">
+                                <a asp-controller="Home" asp-action="Details" asp-route-id="@rental.Movie.MovieId">
+                                    <img src="@rental.Movie.ImageUrl" class="card-img-top" style="width: 70%; height: 90%;" />
+                                </a>
+                            </div>
+
+                            <div class="content col-lg-10 col-md-8 col-sm-7 col-12">
+                                <a asp-controller="Home" class="rent-list" asp-action="Details" asp-route-id="@rental.Movie.MovieId" style="text-decoration: none;">
+                                    <h4 class="text-info rent-list mb-4" style="flex-basis: 100%;">@rental.Movie.Title (@rental.Movie.ReleaseYear)</h4>
+                                </a>
+
+                                <p class="pb-2">Rented: @rental.RentDate.ToString()</p>
+                                <div class="row">
+                                    <a asp-controller="Home" asp-action="Details" asp-route-id="@rental.Movie.MovieId" class="btn btn-info col-6 col-sm-4">View</a>
+
+                                    <form asp-controller="Home" asp-action="Return" asp-route-id="@rental.Id" method="post" role="form" class="mx-4 col-8 col-sm-5">
+                                        <button type="submit" class="btn btn-danger col-12 col-sm-12">Return</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            @if (rental.ReturnDate != null )
+            {
+                <div class="card mb-5 pt-2 col-10 history-body" style="display: none" id="history-body">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="image col-2">
+                                <a asp-controller="Home" asp-action="Details" asp-route-id="@rental.Movie.MovieId">
+                                    <img src="@rental.Movie.ImageUrl" class="card-img-top" style="width: 70%; height: 90%;" />
+                                </a>
+                            </div>
+
+                            <div class="content col-10">
+                                <a asp-controller="Home" asp-action="Details" asp-route-id="@rental.Movie.MovieId" style="text-decoration: none;">
+                                    <h4 class="text-info" style="flex-basis: 100%;">@rental.Movie.Title (@rental.Movie.ReleaseYear)</h4>
+                                </a>
+
+                                <p class="">Rented: @rental.RentDate.ToString()</p>
+                                <p class="">Returned: @rental.ReturnDate.ToString()</p>
+                                <a asp-controller="Home" asp-action="Details" asp-route-id="@rental.Movie.MovieId" class="btn btn-info col-3">View</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+
+</div>
+
+<script>
+    //JavaScript function for toggling rentals
+    function toggle() {
+        
+        //Create iterable objects for displaying current and past rentals
+        var currentBody = document.getElementsByClassName("current-body");
+        var historyBody = document.getElementsByClassName("history-body");
+
+        //Create variables for the toggle buttons
+        var currentBtn = document.getElementById("current-button");
+        var historyBtn = document.getElementById("history-button");
+
+        //Get the elements for displaying when no rentals are present
+        var currentNone = document.getElementById("current-none");
+        var historyNone = document.getElementById("history-none");
+
+        //Create variables for the headers
+        var currentHeader = document.getElementById("current-header");
+        var historyHeader = document.getElementById("history-header");
+
+        //There are 4 cases: (1) both current-body and history body have rentals, (2) current does, but history doesn't,
+        //(3) current is empty, but history isn't, and (4) no rentals have been made at all
+
+        //This is Case 1, if current body and history body are both defined and thus have rentals
+        if (typeof (currentBody[0]) != "undefined" && typeof (historyBody[0]) != "undefined") {
+
+            //If currentBody's display is Null (so this is when past rentals are visible):
+            if (currentBody[0].style.display === "none") {
+
+                //Set the headers, with only current being displayed
+                currentHeader.style.display = "block";
+                historyHeader.style.display = "none";
+
+                //Iterate through current body object
+                for (var i = 0; i < currentBody.length; i++) {
+                    //Set display to block, making all current rentals visible
+                    currentBody[i].style.display = "block";
+                }
+
+                //Iterate through the history body object
+                for (var i = 0; i < historyBody.length; i++) {
+                    //Set display to none, hiding all past rentals
+                    historyBody[i].style.display = "none";
+                }
+
+                //Toggle the status of the buttons so only the rental history button can be clicked
+                currentBtn.disabled = true;
+                historyBtn.disabled = false;
+            } else {
+                //If current body's display is not none, so it's currently visible:
+
+                //Set the headers, with only history being displayed
+                currentHeader.style.display = "none";
+                historyHeader.style.display = "block";
+
+                //Iterate through the current body object
+                for (var i = 0; i < currentBody.length; i++) {
+                    //Set the display for all current rentals to none, as to hide them
+                    currentBody[i].style.display = "none";
+                }
+
+                //Iterate though the history body object
+                for (var i = 0; i < historyBody.length; i++) {
+                    //Set the display for all past rentals to block to display them
+                    historyBody[i].style.display = "block";
+                }
+
+                //Toggle the buttons so that the current button is clickable
+                currentBtn.disabled = false;
+                historyBtn.disabled = true;
+            }
+        } else if (typeof (currentBody[0]) != "undefined" && typeof (historyBody[0]) == "undefined") {
+            //This case 2: current is not empty, but history is
+
+            //If currentBody's display is Null (so this is when past rentals are visible):
+            if (currentBody[0].style.display === "none") {
+
+                //Set the current header to display block because the current rentals are being displayed
+                currentHeader.style.display = "block";
+
+                //Iterate through current body object
+                for (var i = 0; i < currentBody.length; i++) {
+                    //Set display to block, making all current rentals visible
+                    currentBody[i].style.display = "block";
+                }
+
+                //History body is empty here, so just change the display of the placeholder
+                historyNone.style.display = "none";
+
+                //Toggle the status of the buttons so only the rental history button can be clicked
+                currentBtn.disabled = true;
+                historyBtn.disabled = false;
+            } else {
+                //If current body's display is not none, so it's currently visible:
+
+                //Set the current header to display none because the current rentals are being hidden
+                currentHeader.style.display = "none";
+
+                //Iterate through the current body object
+                for (var i = 0; i < currentBody.length; i++) {
+                    //Set the display for all current rentals to none, as to hide them
+                    currentBody[i].style.display = "none";
+                }
+
+                //History body is empty here, so just change the display of the placeholder
+                historyNone.style.display = "block";
+
+                //Toggle the buttons so that the current button is clickable
+                currentBtn.disabled = false;
+                historyBtn.disabled = true;
+            }
+        } else if (typeof (currentBody[0]) == "undefined" && typeof (historyBody[0]) != "undefined") {
+            //This is case 3: current rentals are undefined by history is not
+
+            //If historyBody's display is none (so this is when current rentals is visible):
+            if (historyBody[0].style.display === "none") {
+
+                //Display the history header
+                historyHeader.style.display = "block";
+
+                //Hide the current placeholder
+                currentNone.style.display = "none";
+
+                //Iterate through the history body object
+                for (var i = 0; i < historyBody.length; i++) {
+                    //Set display to block, displaying all past rentals
+                    historyBody[i].style.display = "block";
+                }
+
+                //Toggle the status of the buttons so only the current button can be clicked
+                currentBtn.disabled = false;
+                historyBtn.disabled = true;
+            } else {
+                //If history body's display is not none:
+
+                //Current rentals are empty, so show the placeholder
+                currentNone.style.display = "block";
+
+                //Hide the history header
+                historyHeader.style.display = "none";
+
+                //Iterate though the history body object
+                for (var i = 0; i < historyBody.length; i++) {
+                    //Set the display for all past rentals to none to hide them
+                    historyBody[i].style.display = "none";
+                }
+
+                //Toggle the buttons so that the current button is clickable
+                currentBtn.disabled = true;
+                historyBtn.disabled = false;
+            }
+
+        } else {
+            //This is case 4: when neither currentBody or historyBody has any rentals
+            
+            //If the current rentals placeholder is not being displayed:
+            if (currentNone.style.display == "none") {
+                //Switch the displays to hide the past display and show the current
+                currentNone.style.display = "block";
+                historyNone.style.display = "none";
+
+                //Switch which button can be clicked
+                currentBtn.disabled = true;
+                historyBtn.disabled = false;
+            } else {
+                //Otherwise, display only the past placeholder
+                currentNone.style.display = "none";
+                historyNone.style.display = "block";
+
+                //And make the current button clickable
+                currentBtn.disabled = false;
+                historyBtn.disabled = true;
+            }
+        }
+
+       
+    }
+</script>

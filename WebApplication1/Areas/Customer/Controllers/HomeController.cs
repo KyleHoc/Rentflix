@@ -7,6 +7,9 @@ using System.Drawing.Text;
 using System.Security.Cryptography;
 using Rentflix.DataAccess.Data;
 using System.Reflection.Metadata;
+using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
+using Microsoft.Extensions.Configuration.UserSecrets;
 
 namespace Rentflix.Areas.Customer.Controllers
 {
@@ -17,11 +20,14 @@ namespace Rentflix.Areas.Customer.Controllers
         private readonly IUnitOfWork _unitOfWork;
         private readonly ApplicationDbContext _db;
 
-        public HomeController(ILogger<HomeController> logger, IUnitOfWork unitOfWork, ApplicationDbContext db)
+        private readonly UserManager<IdentityUser> _userManager;
+
+        public HomeController(ILogger<HomeController> logger, IUnitOfWork unitOfWork, ApplicationDbContext db, UserManager<IdentityUser> userManager)
         {
             _logger = logger;
             _unitOfWork = unitOfWork;
             _db = db;
+            _userManager = userManager;
         }
 
         public IActionResult Index()
@@ -40,9 +46,121 @@ namespace Rentflix.Areas.Customer.Controllers
 
         public IActionResult Details(int id) 
         {
+            //Get the movie using the provided ID
             Movie movie = _unitOfWork.Movie.Get(n => n.MovieId == id);
+
+            ViewBag.isRented = false;
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var searchRental = from r in _db.Rentals
+                               where (r.MovieId == id) && (r.UserId == userId)
+                               select r;
+
+            foreach(var r in searchRental)
+            {
+                if (r.ReturnDate == null)
+                {
+                    ViewBag.isRented = true;
+                }
+            }
+
+            //Return the details view, passing in the corresponding movie
             return View(movie);
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Rent(int id)
+        {
+            //Create a new rental
+            Rental newRental = new Rental();
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            //Fill out rental information using provided user and movie id
+            newRental.MovieId = id;
+            newRental.UserId = userId;
+            newRental.RentDate = DateTime.Now;
+            newRental.ReturnDate = null;
+
+            //If model state is valid, create rental
+            if (ModelState.IsValid)
+            {
+                _db.Rentals.Add(newRental);
+                _db.SaveChanges();
+                TempData["success"] = "Movie has been rented";
+            }
+
+            //Redirect to the rentals page
+            return RedirectToAction($"YourRentals", new {user = newRental.UserId });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Return(int id)
+        {
+            var rental = _db.Rentals.Find(id);
+
+            if (rental == null || id == 0)
+            {
+                return NotFound();
+            }
+
+            rental.ReturnDate = DateTime.Now;
+
+            //If model state is valid, create rental
+            if (ModelState.IsValid)
+            {
+                _db.Rentals.Update(rental);
+                _db.SaveChanges();
+                TempData["success"] = "Movie has been returned";
+            }
+
+            //Refresh the page
+            return RedirectToAction($"YourRentals", new { user = rental.UserId });
+        }
+
+        public IActionResult YourRentals(string user)
+        {
+            IQueryable<Rental> rentals = from r in _db.Rentals
+                                         where r.UserId == user
+                                         select r;
+
+            rentals = rentals.Include(r => r.Movie);
+
+            ViewBag.currentRentals = true;
+            ViewBag.pastRentals = true;
+
+            IQueryable<Rental> current = from r in rentals
+                                         where r.ReturnDate == null
+                                         select r;
+
+            IQueryable<Rental> history = from r in rentals
+                                         where r.ReturnDate != null
+                                         select r;
+
+            var result = current.Any();
+
+
+
+
+           if (!result)
+            {
+               ViewBag.currentRentals = false;
+            }
+
+
+            if (!history.Any())
+            {
+                ViewBag.pastRentals = false;
+            }
+
+            return View(rentals);
+        }
+
+       
+
 
         public async Task<IActionResult> List(string? searchString)
         {
@@ -65,6 +183,8 @@ namespace Rentflix.Areas.Customer.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
+
+
 
     public static class EnumerableExtensions
     {
