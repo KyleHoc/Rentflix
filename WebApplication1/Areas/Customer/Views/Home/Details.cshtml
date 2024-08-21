@@ -19,7 +19,7 @@
                     <form asp-controller="Home" asp-action="Rent" asp-route-id="@Model.MovieId" method="post" role="form">
                         @if (!ViewBag.isRented)
                         {
-                            <button type="submit" class="btn btn-info col-3 mt-4 mx-3"><i class="bi bi-film"></i>&nbsp;&nbsp;Rent</button>
+                            <button type="submit" class="btn btn-info col-5 col-lg-3 mt-4 mx-1"><i class="bi bi-film"></i>&nbsp;&nbsp;Rent</button>
                         }
                         else
                         {
@@ -37,10 +37,138 @@
 
 </div>
 
-<div class="card shadow border-0 mt-3" style="margin-bottom: 100px; min-height: 200px">
-    <div class="row d-flex justify-content-between align-items-center">
-        <h1  class="m-3" style="width: 40%">User Reviews</h1>
-        <a asp-controller="Movie" asp-action="Index" class="btn btn-success col-2 mt-2 mx-5"><i class="bi bi-pencil"></i>&nbsp;&nbsp;Write a Review</a>
+<div class="card shadow border-0 mt-3 px-1" style="margin-bottom: 100px; min-height: 200px">
+    <div class="row align-items-center">
+        <div class="col-7 col-lg-9">
+            <h2 class="m-3">User Reviews</h2>
+        </div>
+
+        @if ((User.IsInRole(SD.Role_Admin) || User.IsInRole(SD.Role_Customer)))
+        {
+            <div class="col-5 col-lg-3">
+                <button class="btn btn-success col-10" id="toggle-button" onclick="createToggle()"><i class="bi bi-pencil"></i>&nbsp;&nbsp;Write a Review</button>
+            </div>
+        }
+    </div>
+
+    <div class="row justify-content-center pb-5">
+
+        <form id="create" style="display: none" asp-controller="Review" asp-action="Create" asp-route-id="@Model.MovieId" method="post" role="form">
+            <label class="ms-2">Your Review</label>
+            <div class="form-floating py-2 col-12">
+                <textarea name="text" class="form-control border-0 shadow"></textarea>
+            </div>
+            <button type="submit" class="btn btn-info col-3 mt-2 mb-4">Submit</button>
+        </form>
+
+
+        <div class="px-3 col-12">
+            @if (ViewBag.anyReviews)
+            {
+                @foreach (var review in ViewBag.allReviews)
+                {
+                    <div class="m-3 mb-4">
+                        <div class="row user-date bg-primary justify-content-between p-2 rounded-top-3 align-items-center">
+
+                            <div class="col-7 col-sm-9">
+                                <h6>@review.User.Name</h6>
+                            </div>
+
+                            <div class="col-5 col-sm-3">
+                                <h6>@review.ReviewDate</h6>
+                            </div>
+                        </div>
+                        <form id="edit" asp-controller="Review" asp-action="Edit" asp-route-id="@review.Id" method="post" role="form">
+                            <div class="row review-body bg-white p-3" style="border-left: #375A7F 15px solid; border-right: #375A7F 15px solid;">
+                                <p class="text-black p-2 mb-2" id="@review.Id" style="display: block;">
+                                    @review.Text
+                                </p>
+
+                                <div class="form-floating py-2 col-12" style="display: none" id="area-@review.Id">
+                                    <textarea name="edit-text" class="form-control border-0 shadow">@review.Text</textarea>
+                                </div>
+                            </div>
+
+                            <div class="row manage bg-primary rounded-bottom-3 p-2">
+                                @if (User.Identity.Name == review.User.Email)
+                                {
+                                    <div class="row justify-content-between" id="manage-@review.Id" style="display: block;">
+                                        <a class="btn btn-sm btn-warning col-4 col-sm-2 mx-2 col-lg-1" onclick="editToggle(@review.Id)">Edit</a>
+                                        <a asp-controller="Review" asp-action="Delete" asp-route-id="@review.Id" class="btn btn-danger btn-sm col-4 col-sm-2 col-lg-1">Delete</a>
+                                    </div>
+
+                                    <div class="row" id="edit-@review.Id" style="display: none">
+                                        <button type="submit" class="btn btn-sm btn-warning col-4 mx-3 col-sm-2 col-lg-1">Submit</button>
+                                        <a class="btn btn-sm btn-secondary col-4 col-sm-2 col-lg-1" onclick="editToggle(@review.Id)">Back</a>
+                                    </div>
+                                }
+                            </div>
+                        </form>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="justify-content-center mt-4">
+                    <h3 class="text-center">This movie does not yet have any reviews</h3>
+                    <h4 class="text-center">Be the first to write one!</h4>
+                </div>
+            }
+        </div>
+        
     </div>
 
 </div>
+
+<script>
+    let toggle = false;
+    let createForm = document.getElementById("create");
+
+    
+
+    function createToggle() {
+        if (!toggle) {
+            createForm.style.display = "block";
+            toggle = true;
+        } else {
+            createForm.style.display = "none";
+            toggle = false;
+        }
+    }
+
+    function editToggle(id) {
+        let editPost = document.getElementById(id);
+        let manage = document.getElementById(`manage-${id}`);
+        let edit = document.getElementById(`edit-${id}`);
+        let area = document.getElementById(`area-${id}`);
+
+        if (manage.style.display == "block") {
+            editPost.style.display = "none";
+            area.style.display = "block";
+            editPost.style.border = "#375A7F 1px solid";
+            manage.style.display = "none";
+            edit.style.display = "block";
+
+        } else {
+            editPost.style.display = "block";
+            area.style.display = "none";
+            editPost.style.border = "none";
+            manage.style.display = "block";
+            edit.style.display = "none";
+        }
+    }
+
+    tinymce.init({
+        selector: 'textarea',
+        forced_root_block: 'test',
+        plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount ',
+        toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+        tinycomments_mode: 'embedded',
+        tinycomments_author: 'Author name',
+        mergetags_list: [
+            { value: 'First.Name', title: 'First Name' },
+            { value: 'Email', title: 'Email' },
+        ],
+        ai_request: (request, respondWith) => respondWith.string(() => Promise.reject("See docs to implement AI Assistant")),
+    });
+</script>

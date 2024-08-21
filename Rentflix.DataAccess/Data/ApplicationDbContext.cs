@@ -15,5 +15,6 @@ namespace Rentflix.DataAccess.Data
         public DbSet<Movie> Movies { get; set; }
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
         public DbSet <Rental> Rentals { get; set; }
+        public DbSet <Review> Reviews {  get; set; } 
     }
 }

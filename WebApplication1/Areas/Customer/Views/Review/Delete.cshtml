@@ -1,0 +1,50 @@
+﻿@model Review
+
+<div class="card shadow border-0 mt-3 px-3" style="margin-bottom: 100px; min-height: 200px">
+    <div class="row justify-content-center pb-5">
+        <h2 class="row justify-content-center">
+            Are you sure you want to delete your review?
+        </h2>
+        <form id="delete" asp-controller="Review" asp-action="DeletePOST" asp-route-id="@Model.Id" method="post" role="form">
+            <div class="m-3">
+                <div class="row user-date bg-primary justify-content-between p-2 rounded-top-3">
+                    <div class="col-7 col-sm-9">
+                        <h6>@Model.User.Name</h6>
+                    </div>
+
+                    <div class="col-5 col-sm-3">
+                        <h6>@Model.ReviewDate</h6>
+                    </div>
+                </div>
+
+                <div class="row review-body bg-white p-3" style="border-left: #375A7F 15px solid; border-right: #375A7F 15px solid;">
+                    <p class="text-black p-2 mb-2" id="@Model.Id" style="display: block;">
+                        @Model.Text
+                    </p>
+                </div>
+
+                <div class="row manage bg-primary pt-1 rounded-bottom-3">
+                    <p>This cannot be reversed</p>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-danger btn-sm col-4 col-sm-2 mx-2 col-lg-1">Delete</button>
+            <a asp-controller="Home" asp-action="Details" asp-route-id="@Model.MovieId" class="btn btn-secondary btn-sm col-4 col-sm-2 mx-2 col-lg-1">Back</a>
+        </form>
+    </div>
+</div>
+
+<script>
+    tinymce.init({
+        selector: 'textarea',
+        forced_root_block: 'test',
+        plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount ',
+        toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+        tinycomments_mode: 'embedded',
+        tinycomments_author: 'Author name',
+        mergetags_list: [
+            { value: 'First.Name', title: 'First Name' },
+            { value: 'Email', title: 'Email' },
+        ],
+        ai_request: (request, respondWith) => respondWith.string(() => Promise.reject("See docs to implement AI Assistant")),
+    });
+</script>

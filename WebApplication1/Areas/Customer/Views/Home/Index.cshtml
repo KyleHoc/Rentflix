@@ -10,8 +10,13 @@
             <h4 class="mb-3">Watch your favorite movies anytime</h4>
             <h4 class="mb-3">Free Rentals (for pretend Web Dev purposes)</h4>
             <h4 class="mb-3">Keep them for as long as you want (because they're not real)</h4>
-            <a asp-controller="Movie" asp-action="Upsert" class="btn btn-info col-2">Start Now!</a>
-
+            @if(User.IsInRole(SD.Role_Customer) || User.IsInRole(SD.Role_Admin))
+            {
+                <a asp-controller="Home" asp-action="List" class="btn btn-info col-5 col-sm-3 col-md-2 col-lg-2">Browse</a>
+            } else
+            {
+                <a id="register" asp-area="Identity" asp-page="/Account/Register" class="btn btn-info col-3 col-sm-2">Start Now!</a>
+            }
         </div>
     </div>
 

@@ -8,9 +8,13 @@
     <div class="text-center mb-2">
         <h1>Browse Movies</h1>
 
-        <form asp-controller="Home" asp-action="List" method="get" class="row justify-content-center mb-4 mt-4">
-            <input class="form-control" type="text" placeholder="Search" name="searchString" style="width: 75%">
-            <button class="btn btn-primary mx-2" type="submit" style="width: 20%">Search</button>
+        <form asp-controller="Home" asp-action="List" method="get" class="row mb-4 mt-4 justify-content-center">
+            <div class="col-lg-7 col-md-7 col-sm-7 col-8">
+                <input class="form-control" type="text" placeholder="Search" name="searchString">
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-3 col-4">
+                <button class="btn btn-primary col-12" type="submit">Search</button>
+            </div>
         </form>
 
     </div>
@@ -19,20 +23,20 @@
         <div class="card mb-5 pt-2 col-10">
             <div class="card-body">
                 <div class="row">
-                    <div class="image col-sm-12 col-lg-2 text-center">
+                    <div class="image col-sm-4 col-lg-2 text-center">
                         <a asp-controller="Home" asp-action="Details" asp-route-id="@movie.MovieId">
-                            <img src="@movie.ImageUrl" class="card-img-top" style="width: 70%; height: 90%;" />
+                            <img src="@movie.ImageUrl" class="card-img-top" style="width: 100%; height: 90%;" />
                         </a>
                     </div>
 
-                    <div class="content col-10">
+                    <div class="content col-sm-8 col-lg-10">
                         <a asp-controller="Home" asp-action="Details" asp-route-id="@movie.MovieId" style="text-decoration: none;">
                             <h4 class="text-info" style="flex-basis: 100%;">@movie.Title (@movie.ReleaseYear)</h4>
                         </a>
 
                         <p class="">Genre: @movie.Genre</p>
                         <p class="">@Html.Raw(movie.Synopsis)</p>
-                        <a asp-controller="Home" asp-action="Details" asp-route-id="@movie.MovieId" class="btn btn-info col-3">View</a>
+                        <a asp-controller="Home" asp-action="Details" asp-route-id="@movie.MovieId" class="btn btn-info btn-sm col-lg-3 col-md-3 col-sm-3 col-4">View</a>
                     </div>
                 </div>
             </div>

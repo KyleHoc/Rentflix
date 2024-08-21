@@ -39,6 +39,11 @@ namespace Rentflix.Areas.Customer.Controllers
             return View(movies);
         }
 
+        public IActionResult About()
+        {
+            return View();
+        }
+
         public IActionResult Privacy()
         {
             return View();
@@ -49,20 +54,42 @@ namespace Rentflix.Areas.Customer.Controllers
             //Get the movie using the provided ID
             Movie movie = _unitOfWork.Movie.Get(n => n.MovieId == id);
 
+            //Initialize isRented to false
             ViewBag.isRented = false;
 
+            //Get the current user id
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
+            //Search the rental database to search for all instances of the current user renting this movie
             var searchRental = from r in _db.Rentals
                                where (r.MovieId == id) && (r.UserId == userId)
                                select r;
 
+            //Check each rental to see if it's been returned yet
             foreach(var r in searchRental)
             {
+                //If the user has rented this movie and has not returned it, set is rented to true
                 if (r.ReturnDate == null)
                 {
                     ViewBag.isRented = true;
                 }
+            }
+
+            //Search the review database for all reviews for this movie
+            IQueryable<Review> reviews = from r in _db.Reviews
+                                          where r.MovieId == id
+                                          select r;
+
+            reviews = reviews.Include(r => r.User);
+
+            //Initialize anyReviews to false
+            ViewBag.anyReviews = false;
+
+            //If this movie has any reviews, set anyReviews to true
+            if(reviews.Any())
+            {
+                ViewBag.anyReviews = true;
+                ViewBag.allReviews = reviews.ToList();
             }
 
             //Return the details view, passing in the corresponding movie
@@ -141,9 +168,6 @@ namespace Rentflix.Areas.Customer.Controllers
                                          select r;
 
             var result = current.Any();
-
-
-
 
            if (!result)
             {
